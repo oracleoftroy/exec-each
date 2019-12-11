@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const util = require('util');
 const fs = require('fs').promises;
 const path = require('path');
