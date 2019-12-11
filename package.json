@@ -1,6 +1,6 @@
 {
 	"name": "exec-each",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Run a command for each file in a glob expansion",
 	"bin": "src/main.js",
 	"scripts": {
