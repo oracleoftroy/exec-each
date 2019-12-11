@@ -27,6 +27,10 @@ function getCommandline() {
 			describe: 'file path to redirect standard error',
 			type: 'string'
 		})
+		.option('dry-run', {
+			describe: 'show what commands will be run without running anything',
+			type: 'boolean'
+		})
 		.help().argv;
 }
 
@@ -53,27 +57,35 @@ async function runOne(file, opts) {
 	const fout = opts.out ? substitute(opts.out) : null;
 	const ferr = opts.err ? substitute(opts.err) : null;
 
-	try {
-		if (fout) {
-			await fs.mkdir(path.dirname(fout), { recursive: true });
-			out = await fs.open(fout, 'w');
-		} else {
-			out = 1;
+	if (opts['dry-run']) {
+		const stdio = fout ? ` > ${fout}` : '';
+		const stderr = ferr ? ` 2> ${ferr}` : '';
+
+		const cmd = `${opts.cmd} ${args.join(' ')}${stdio}${stderr}`;
+		console.info(cmd);
+	} else {
+		try {
+			if (fout) {
+				await fs.mkdir(path.dirname(fout), { recursive: true });
+				out = await fs.open(fout, 'w');
+			} else {
+				out = 1;
+			}
+
+			if (ferr) {
+				await fs.mkdir(path.dirname(ferr), { recursive: true });
+				err = await fs.open(ferr, 'w');
+			} else {
+				err = 2;
+			}
+
+			const spawnOpts = { stdio: [0, out, err], shell: true };
+
+			await spawn(opts.cmd, args, spawnOpts);
+		} finally {
+			if (fout) await out.close();
+			if (ferr) await err.close();
 		}
-
-		if (ferr) {
-			await fs.mkdir(path.dirname(ferr), { recursive: true });
-			err = await fs.open(ferr, 'w');
-		} else {
-			err = 2;
-		}
-
-		const spawnOpts = { stdio: [0, out, err], shell: true };
-
-		await spawn(opts.cmd, args, spawnOpts);
-	} finally {
-		if (fout) await out.close();
-		if (ferr) await err.close();
 	}
 }
 
