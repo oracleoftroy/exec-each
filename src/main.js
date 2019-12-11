@@ -8,7 +8,7 @@ const spawn = util.promisify(require('child_process').spawn);
 
 function getCommandline() {
 	return require('yargs')
-		.command('$0 <files> <cmd> [args..]', 'Runs <cmd> once for every file in <files>', yargs => {
+		.command('$0 <files> <cmd> [-- args..]', 'Runs <cmd> once for every file in <files>', yargs => {
 			yargs
 				.positional('files', {
 					describe: 'glob pattern of the files you wish to find',
@@ -16,10 +16,6 @@ function getCommandline() {
 				})
 				.positional('cmd', {
 					describe: 'command to run for each file',
-					type: 'string'
-				})
-				.positional('args', {
-					describe: 'additional arguments for <cmd>',
 					type: 'string'
 				});
 		})
@@ -52,7 +48,7 @@ async function runOne(file, opts) {
 			.replace(/\{path\}/gi, filePath)
 			.replace(/\{dir\}/gi, fileDir);
 
-	const args = opts.args.map(substitute);
+	const args = opts._.map(substitute);
 
 	const fout = opts.out ? substitute(opts.out) : null;
 	const ferr = opts.err ? substitute(opts.err) : null;

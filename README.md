@@ -4,7 +4,7 @@ Run a command multiple times against a file glob pattern. There are several util
 
 ## Usage
 
-`exec-each <files> <cmd> [args..]`
+`exec-each <files> <cmd> [-- args..]`
 
 Runs <cmd> once for every file in <files>
 
@@ -12,7 +12,7 @@ Runs <cmd> once for every file in <files>
 
 `files` - glob pattern of the files you wish to find
 `cmd` - command to run for each file
-`args` - additional arguments for <cmd>, supports substitutions
+`args` - additional arguments for <cmd>, supports substitutions. Arguments for <cmd> should be preceded by `--`
 
 ### Options:
 
@@ -23,13 +23,13 @@ Runs <cmd> once for every file in <files>
 
 ### Substitutions:
 
-    exec-each will replace the following strings in the command's arguments, as well as any standard out or err file specified.
+exec-each will replace the following strings in the command's arguments, as well as the out or err file specified with a string based on the file matched by the glob pattern.
 
-    `{path}` - the full path to the file. E.g. `./dir/file.txt`
-    `{dir}` - the directory containing the file. E.g. `./dir`
-    `{file}` - the full name of the file. E.g. `file.txt`
-    `{basefile}` - the file name of the file without the extension. E.g. `file`
+`{path}` - the full path to the file. E.g. `./dir/file.txt`
+`{dir}` - the directory containing the file. E.g. `./dir`
+`{file}` - the full name of the file. E.g. `file.txt`
+`{basefile}` - the file name of the file without the extension. E.g. `file`
 
 ### Example:
 
-    exec-each --out docs/{basefile}.md src/*.js jsdoc2md {path}
+    exec-each --out docs/{basefile}.md src/*.js jsdoc2md -- {path}
