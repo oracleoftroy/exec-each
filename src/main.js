@@ -68,7 +68,7 @@ async function runOne(file, opts) {
 			err = 2;
 		}
 
-		const spawnOpts = { stdio: [0, out, err] };
+		const spawnOpts = { stdio: [0, out, err], shell: true };
 
 		await spawn(opts.cmd, args, spawnOpts);
 	} finally {
